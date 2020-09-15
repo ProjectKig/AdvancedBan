@@ -363,50 +363,6 @@ public enum Command {
             "Notes.Usage",
             "notes"),
 
-    CHECK("ab.check",
-            "\\S+",
-            new BasicTabCompleter(CleanTabCompleter.PLAYER_PLACEHOLDER, "[Name]"),
-            input -> {
-                String name = input.getPrimary();
-
-                String uuid = processName(input);
-                if (uuid == null)
-                    return;
-
-                String ip = Universal.get().getIps().getOrDefault(name.toLowerCase(), "none cashed");
-                String loc = Universal.get().getMethods().getFromUrlJson("http://ip-api.com/json/" + ip, "country");
-                Punishment mute = PunishmentManager.get().getMute(uuid);
-                Punishment ban = PunishmentManager.get().getBan(uuid);
-
-                String cached = MessageManager.getMessage("Check.Cached", false);
-                String notCached = MessageManager.getMessage("Check.NotCached", false);
-
-                boolean nameCached = PunishmentManager.get().isCached(name.toLowerCase());
-                boolean ipCached = PunishmentManager.get().isCached(ip);
-                boolean uuidCached = PunishmentManager.get().isCached(uuid);
-
-                Object sender = input.getSender();
-                MessageManager.sendMessage(sender, "Check.Header", true, "NAME", name, "CACHED", nameCached ? cached : notCached);
-                MessageManager.sendMessage(sender, "Check.UUID", false, "UUID", uuid, "CACHED", uuidCached ? cached : notCached);
-                if (Universal.get().hasPerms(sender, "ab.check.ip")) {
-                    MessageManager.sendMessage(sender, "Check.IP", false, "IP", ip, "CACHED", ipCached ? cached : notCached);
-                }
-                MessageManager.sendMessage(sender, "Check.Geo", false, "LOCATION", loc == null ? "failed!" : loc);
-                MessageManager.sendMessage(sender, "Check.Mute", false, "DURATION", mute == null ? "§anone" : mute.getType().isTemp() ? "§e" + mute.getDuration(false) : "§cperma");
-                if (mute != null) {
-                    MessageManager.sendMessage(sender, "Check.MuteReason", false, "REASON", mute.getReason());
-                }
-                MessageManager.sendMessage(sender, "Check.Ban", false, "DURATION", ban == null ? "§anone" : ban.getType().isTemp() ? "§e" + ban.getDuration(false) : "§cperma");
-                if (ban != null) {
-                    MessageManager.sendMessage(sender, "Check.BanReason", false, "REASON", ban.getReason());
-                }
-                MessageManager.sendMessage(sender, "Check.Warn", false, "COUNT", PunishmentManager.get().getCurrentWarns(uuid) + "");
-
-                MessageManager.sendMessage(sender, "Check.Note", false, "COUNT", PunishmentManager.get().getCurrentNotes(uuid) + "");
-            },
-            "Check.Usage",
-            "check"),
-
     SYSTEM_PREFERENCES("ab.systemprefs",
             ".*",
             null,
