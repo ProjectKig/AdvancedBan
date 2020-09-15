@@ -64,7 +64,7 @@ public class PunishmentTabCompleter implements TabCompleter {
         if(args.length > 0){
             final Iterator<String> iterator = suggestions.iterator();
             while (iterator.hasNext()){
-                if(!iterator.next().startsWith(args[args.length - 1]))
+                if(!iterator.next().toLowerCase().startsWith(args[args.length - 1].toLowerCase()))
                     iterator.remove();
             }
         }
