@@ -8,6 +8,7 @@ import me.leoko.advancedban.bukkit.listener.CommandReceiver;
 import me.leoko.advancedban.manager.DatabaseManager;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
+import me.leoko.advancedban.utils.Command;
 import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.tabcompletion.TabCompleter;
 import org.bstats.bukkit.Metrics;
@@ -153,7 +154,8 @@ public class BukkitMethods implements MethodInterface {
             command.setExecutor(CommandReceiver.get());
             if (tabCompleter != null)
                 command.setTabCompleter((commandSender, c, s, args) -> {
-                    if (command.getPermission() != null && !hasPerms(commandSender, command.getPermission()))
+                    Command ours = Command.getByName(c.getName());
+                    if (ours == null || ours.getPermission() != null && !hasPerms(commandSender, ours.getPermission()))
                         return Collections.emptyList();
                     return tabCompleter.onTabComplete(commandSender, args);
                 });
