@@ -7,6 +7,7 @@ import me.leoko.advancedban.manager.*;
 import me.leoko.advancedban.utils.Command;
 import me.leoko.advancedban.utils.InterimData;
 import me.leoko.advancedban.utils.Punishment;
+import me.leoko.advancedban.utils.PunishmentType;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.io.FileUtils;
 
@@ -302,12 +303,15 @@ public class Universal {
         }
 
         Punishment pt = interimData.getBan();
-
         if (pt == null) {
             interimData.accept();
             return null;
         }
-
+        // If the user is ip-banned, ban the account as well.
+        if(mi.getBoolean(mi.getConfig(), "Ban Accounts on IP", true) && !pt.getType().isTemp() && pt.getType().isIpOrientated()) {
+            Punishment ban = PunishmentManager.get().getBan(uuid);
+            if(ban == null) Punishment.create(name, uuid, pt.getReason(), "IPB-Auto", PunishmentType.BAN, -1L, "", false);
+        }
         return pt.getLayoutBSN();
     }
 
